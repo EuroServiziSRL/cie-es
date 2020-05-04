@@ -9,7 +9,7 @@ module Cie
       end
 
       def encode(encoded)
-        Base64.encode64(encoded).gsub(/\n/, "")
+        Base64.strict_encode64(encoded)
       end
 
       def escape(unescaped)

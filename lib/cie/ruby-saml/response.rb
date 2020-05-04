@@ -569,7 +569,7 @@ module Cie
               
               node_auth_stat_context_class_ref = xpath_first_from_signed_assertion('/a:AuthnStatement/a:AuthnContext/a:AuthnContextClassRef')
               #Cieer.logger.error "\n\n node_auth_stat_context_class_ref #{node_auth_stat_context_class_ref.text}"
-              return soft ? false : validation_error("Errore su Asserzione: AuthnContextClassRef di AuthnContext su AuthnStatement vuoto o non L2") if node_auth_stat_context_class_ref.blank? || ( (node_auth_stat_context_class_ref.text != 'https://www.spid.gov.it/CieL2') && (node_auth_stat_context_class_ref.text != 'https://www.spid.gov.it/CieL3')) 
+              return soft ? false : validation_error("Errore su Asserzione: AuthnContextClassRef di AuthnContext su AuthnStatement vuoto o non L2") if node_auth_stat_context_class_ref.blank? || ( (node_auth_stat_context_class_ref.text != 'https://www.spid.gov.it/SpidL2') && (node_auth_stat_context_class_ref.text != 'https://www.spid.gov.it/SpidL3')) 
               
               node_attr_stmt_attribute_value = xpath_first_from_signed_assertion("/a:AttributeStatement/a:Attribute/a:AttributeValue")
               #Elemento AttributeStatement presente, ma sottoelemento Attribute non specificato, caso 99

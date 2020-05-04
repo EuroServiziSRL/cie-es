@@ -1,4 +1,4 @@
-require "spid/ruby-saml/validation_error"
+require "cie/ruby-saml/validation_error"
 
 module Cie
   module Saml

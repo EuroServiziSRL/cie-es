@@ -29,24 +29,16 @@ module Cie::Saml
       # Create AuthnRequest root element using REXML 
       request_doc = Cie::XMLSecurityNew::Document.new
       request_doc.context[:attribute_quote] = :quote
-      root = request_doc.add_element "saml2p:AuthnRequest", { "xmlns:saml2p" => "urn:oasis:names:tc:SAML:2.0:protocol", 
+      root = request_doc.add_element "samlp:AuthnRequest", { "xmlns:samlp" => "urn:oasis:names:tc:SAML:2.0:protocol", 
                                                               "xmlns:saml" => "urn:oasis:names:tc:SAML:2.0:assertion"
                                                              }
       root.attributes['ID'] = uuid
       root.attributes['IssueInstant'] = time
       root.attributes['Version'] = "2.0"
-      #root.attributes['ProtocolBinding'] = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+      root.attributes['ProtocolBinding'] = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
       root.attributes['AttributeConsumingServiceIndex'] = @settings.assertion_consumer_service_index
       root.attributes['ForceAuthn'] = "true"
-      #root.attributes['IsPassive'] = "false"
-      #usato AssertionConsumerServiceURL e ProtocolBinding in alternativa, pag 8 regole tecniche
-      root.attributes['AssertionConsumerServiceIndex'] = @settings.attribute_consuming_service_index
-
-      #Tolto, utilizzo AssertionConsumerServiceIndex
-      # # Conditionally defined elements based on settings
-      # if @settings.assertion_consumer_service_url != nil
-      #   root.attributes["AssertionConsumerServiceURL"] = @settings.assertion_consumer_service_url
-      # end
+      root.attributes["AssertionConsumerServiceURL"] = @settings.assertion_consumer_service_url
 
       if @settings.destination_service_url != nil
         root.attributes["Destination"] = @settings.destination_service_url
@@ -71,9 +63,9 @@ module Cie::Saml
 
 
       if @settings.name_identifier_format != nil
-        root.add_element "saml2p:NameIDPolicy", { 
+        root.add_element "samlp:NameIDPolicy", { 
             # Might want to make AllowCreate a setting?
-            #{}"AllowCreate"     => "true",
+            "AllowCreate"     => "1",
             "Format"          => @settings.name_identifier_format[0]
         }
       end
@@ -82,7 +74,7 @@ module Cie::Saml
       # match required for authentication to succeed.  If this is not defined, 
       # the IdP will choose default rules for authentication.  (Shibboleth IdP)
       if @settings.authn_context != nil
-        requested_context = root.add_element "saml2p:RequestedAuthnContext", { 
+        requested_context = root.add_element "samlp:RequestedAuthnContext", { 
           "Comparison" => "minimum"
         }
         context_class = []
@@ -94,12 +86,12 @@ module Cie::Saml
       end
 
       if @settings.requester_identificator != nil
-        requester_identificator = root.add_element "saml2p:Scoping", { 
+        requester_identificator = root.add_element "samlp:Scoping", { 
           "ProxyCount" => "0"
         }
         identificators = []
         @settings.requester_identificator.each_with_index{ |requester, index|
-          identificators[index] = requester_identificator.add_element "saml2p:RequesterID"
+          identificators[index] = requester_identificator.add_element "samlp:RequesterID"
           identificators[index].text = requester
         }
         

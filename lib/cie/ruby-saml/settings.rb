@@ -19,7 +19,7 @@ module Cie
         end
 
         # Set some sane default values on a few options
-        self.assertion_consumer_service_binding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+        self.assertion_consumer_service_binding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         self.single_logout_service_binding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
         # Default cache TTL for metadata is 1 day
         self.idp_metadata_ttl = 86400

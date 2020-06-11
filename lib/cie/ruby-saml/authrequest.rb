@@ -35,7 +35,7 @@ module Cie::Saml
       root.attributes['ID'] = uuid
       root.attributes['IssueInstant'] = time
       root.attributes['Version'] = "2.0"
-      root.attributes['ProtocolBinding'] = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+      root.attributes['ProtocolBinding'] = HTTP_GET
       root.attributes['AttributeConsumingServiceIndex'] = @settings.assertion_consumer_service_index
       root.attributes['ForceAuthn'] = "true"
       root.attributes["AssertionConsumerServiceURL"] = @settings.assertion_consumer_service_url
@@ -132,7 +132,16 @@ module Cie::Saml
       metadata = Metadata::new
       meta_doc = metadata.get_idp_metadata(@settings)
       
-      # first try POST
+      # first try GET
+      sso_element = REXML::XPath.first(meta_doc,
+        "/EntityDescriptor/IDPSSODescriptor/SingleSignOnService[@Binding='#{HTTP_GET}']")
+      if sso_element 
+        @URL = sso_element.attributes["Location"]
+        Logging.debug "binding_select: GET from #{@URL}"
+        return "GET", content_get
+      end
+
+      # then try POST
       sso_element = REXML::XPath.first(meta_doc,
         "/EntityDescriptor/IDPSSODescriptor/SingleSignOnService[@Binding='#{HTTP_POST}']")
       if sso_element 
@@ -141,14 +150,7 @@ module Cie::Saml
         return "POST", content_post
       end
       
-      # next try GET
-      sso_element = REXML::XPath.first(meta_doc,
-        "/EntityDescriptor/IDPSSODescriptor/SingleSignOnService[@Binding='#{HTTP_GET}']")
-      if sso_element 
-        @URL = sso_element.attributes["Location"]
-        Logging.debug "binding_select: GET from #{@URL}"
-        return "GET", content_get
-      end
+      
       # other types we might want to add in the future:  SOAP, Artifact
     end
     

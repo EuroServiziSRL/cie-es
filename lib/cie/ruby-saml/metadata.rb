@@ -38,9 +38,11 @@ module Cie
         if settings.issuer != nil
           root.attributes["entityID"] = settings.issuer
         end
-        uuid = "_" + UUID.new.generate
-        self.uuid = uuid
-        root.attributes["ID"] = uuid
+        
+        #Tolgo attributo ID per avere il metadata uguale e non farlo cambiare continuamente
+        # uuid = "_" + UUID.new.generate
+        # self.uuid = uuid
+        # root.attributes["ID"] = uuid
 
         sp_sso = root.add_element "md:SPSSODescriptor", { 
             "protocolSupportEnumeration" => "urn:oasis:names:tc:SAML:2.0:protocol",

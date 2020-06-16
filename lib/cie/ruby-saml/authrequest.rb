@@ -35,7 +35,7 @@ module Cie::Saml
       root.attributes['ID'] = uuid
       root.attributes['IssueInstant'] = time
       root.attributes['Version'] = "2.0"
-      root.attributes['ProtocolBinding'] = HTTP_GET
+      root.attributes['ProtocolBinding'] = HTTP_POST
       root.attributes['AttributeConsumingServiceIndex'] = @settings.assertion_consumer_service_index
       root.attributes['ForceAuthn'] = "true"
       root.attributes["AssertionConsumerServiceURL"] = @settings.assertion_consumer_service_url

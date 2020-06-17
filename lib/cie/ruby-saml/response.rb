@@ -160,17 +160,17 @@ module Cie
               return (soft ? false : validation_error("Issuer of the Assertion not found or multiple."))
             end
 
-            issuer_response_nodes.each{ |iss|
-              #controllo: L'attributo Format di Issuer deve essere presente con il valore urn:oasis:names:tc:SAML:2.0:nameid-format:entity
-              return (soft ? false : validation_error("Elemento Issuer non ha formato corretto ")) if !iss.attributes['Format'].nil? && iss.attributes['Format'] != 'urn:oasis:names:tc:SAML:2.0:nameid-format:entity'
+            # issuer_response_nodes.each{ |iss|
+            #   #controllo: L'attributo Format di Issuer deve essere presente con il valore urn:oasis:names:tc:SAML:2.0:nameid-format:entity
+            #   return (soft ? false : validation_error("Elemento Issuer non ha formato corretto ")) if !iss.attributes['Format'].nil? && iss.attributes['Format'] != 'urn:oasis:names:tc:SAML:2.0:nameid-format:entity'
 
-            }
+            # }
 
-            issuer_assertion_nodes.each{ |iss|
-              #controllo: L'attributo Format di Issuer deve essere presente con il valore urn:oasis:names:tc:SAML:2.0:nameid-format:entity
-              return (soft ? false : validation_error("Elemento Issuer non ha formato corretto ")) if iss.attributes['Format'] != 'urn:oasis:names:tc:SAML:2.0:nameid-format:entity'
+            # issuer_assertion_nodes.each{ |iss|
+            #   #controllo: L'attributo Format di Issuer deve essere presente con il valore urn:oasis:names:tc:SAML:2.0:nameid-format:entity
+            #   return (soft ? false : validation_error("Elemento Issuer non ha formato corretto ")) if iss.attributes['Format'] != 'urn:oasis:names:tc:SAML:2.0:nameid-format:entity'
 
-            }
+            # }
 
             nodes = issuer_response_nodes + issuer_assertion_nodes
 

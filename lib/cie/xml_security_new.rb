@@ -126,7 +126,7 @@ module Cie
         signed_info_element.add_element("ds:SignatureMethod", {"Algorithm"=>signature_method})
 
         # Add Reference
-        reference_element = signed_info_element.add_element("ds:Reference", {"URI" => "##{uuid}"})
+        reference_element = signed_info_element.add_element("ds:Reference")
 
         # Add Transforms
         transforms_element = reference_element.add_element("ds:Transforms")

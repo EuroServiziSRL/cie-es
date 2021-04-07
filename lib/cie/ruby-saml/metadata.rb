@@ -33,7 +33,8 @@ module Cie
         meta_doc = Cie::XMLSecurityNew::Document.new
         root = meta_doc.add_element "md:EntityDescriptor", { 
             "xmlns:md"        => "urn:oasis:names:tc:SAML:2.0:metadata",
-            "xmlns:xml"       => "http://www.w3.org/XML/1998/namespace"
+            "xmlns:xml"       => "http://www.w3.org/XML/1998/namespace",
+            "xmlns:cie"       => "https://www.cartaidentita.interno.gov.it/saml-extensions"
         }
         if settings.issuer != nil
           root.attributes["entityID"] = settings.issuer
@@ -202,40 +203,6 @@ module Cie
               end
             }
 
-
-
-
-            #Per EIDAS
-            # #AttributeConsumingService
-            # attr_cons_service = sp_sso.add_element "md:AttributeConsumingService", {
-            #     "index" => "99",
-            # }
-            # service_name 
-            # = attr_cons_service.add_element "md:ServiceName", {
-            #       "xml:lang" => "it"
-            # }
-            # service_name.text = "eIDAS Natural Person Minimum Attribute Set"
-            # settings.requested_attribute.each_with_index{ |attribute, index|
-            #   attr_cons_service.add_element "md:RequestedAttribute", {
-            #       "Name" => attribute
-            #   }
-            # }
-
-            # #AttributeConsumingService
-            # attr_cons_service = sp_sso.add_element "md:AttributeConsumingService", {
-            #   "index" => "100",
-            # }
-            # service_name = attr_cons_service.add_element "md:ServiceName", {
-            #       "xml:lang" => "it"
-            # }
-            # service_name.text = "eIDAS Natural Person Full Attribute Set"
-            # settings.requested_attribute.each_with_index{ |attribute, index|
-            #   attr_cons_service.add_element "md:RequestedAttribute", {
-            #       "Name" => attribute
-            #   }
-            # }
-
-
         end
         #organization
         organization = root.add_element "md:Organization"
@@ -251,6 +218,98 @@ module Cie
             "xml:lang" => "it"
         }
         org_url.text = settings.organization['org_url']
+
+        #Nuovi tag contactperson
+
+        contact_person_administrative = root.add_element "md:ContactPerson", {
+          "contactType" => "administrative"
+        }
+
+        extensions_administrative = contact_person_administrative.add_element "md:Extensions"
+
+        public_extension = extensions_administrative.add_element "cie:Public"
+        public_extension.text = ""
+
+        unless settings.hash_ente['ipa_code'].blank?
+          ipa_code_ente = extensions_administrative.add_element "cie:IPACode"
+          ipa_code_ente.text = settings.hash_ente['ipa_code']
+        end
+
+        ipa_code_catente = extensions_administrative.add_element "cie:IPACategory"
+        
+        unless settings.hash_ente['belfiore'].blank?
+          belfiore_ente = extensions_administrative.add_element "cie:Municipality"
+          belfiore_ente.text = ( settings.hash_ente['belfiore'].blank? ? '' : settings.hash_ente['belfiore'].upcase )
+        end
+      
+        unless settings.hash_ente['organization_name'].blank?
+          company_ente = contact_person_administrative.add_element "md:Company"
+          company_ente.text = settings.hash_ente['organization_name']
+        end
+
+        unless settings.hash_ente['organization_email'].blank?
+          email_address_ente = contact_person_administrative.add_element "md:EmailAddress"
+          email_address_ente.text = settings.hash_ente['organization_email']
+        end
+
+        unless settings.hash_ente['organization_tel'].blank?
+          telephone_number_ente = contact_person_administrative.add_element "md:TelephoneNumber"
+          telephone_number_ente.text = settings.hash_ente['organization_tel']
+        end
+
+
+        contact_person_technical = root.add_element "md:ContactPerson", {
+          "contactType" => "technical"
+        }
+
+        extensions_private = contact_person_technical.add_element "md:Extensions"
+
+        private_extension = extensions_private.add_element "cie:Private"
+        private_extension.text = ""
+
+        unless settings.hash_fornitore_servizi['p_iva'].blank?
+          vat_number_fornitore = extensions_private.add_element "cie:VATNumber"
+          vat_number_fornitore.text = settings.hash_fornitore_servizi['p_iva']
+        end
+
+        unless settings.hash_fornitore_servizi['cf'].blank?
+          cf_fornitore = extensions_private.add_element "cie:FiscalCode"
+          cf_fornitore.text = settings.hash_fornitore_servizi['cf']
+        end
+        
+        unless settings.hash_fornitore_servizi['cod_ateco'].blank?
+          cod_ateco_fornitore = extensions_private.add_element "cie:NACE2Code"
+          cod_ateco_fornitore.text = settings.hash_fornitore_servizi['cod_ateco']
+        end
+
+        unless settings.hash_fornitore_servizi['cod_istat'].blank?
+          cod_istat_fornitore = extensions_private.add_element "cie:Municipality"
+          cod_istat_fornitore.text = settings.hash_fornitore_servizi['cod_istat']
+        end
+
+        unless settings.hash_fornitore_servizi['prov'].blank?
+          prov_fornitore = extensions_private.add_element "cie:Province"
+          prov_fornitore.text = settings.hash_fornitore_servizi['prov']
+        end
+
+        stato_fornitore = extensions_private.add_element "cie:Country"
+        stato_fornitore.text = 'IT'
+        
+        unless settings.hash_fornitore_servizi['nome_fornitore'].blank?
+          company_aggregatore = contact_person_technical.add_element "md:Company"
+          company_aggregatore.text = settings.hash_fornitore_servizi['nome_fornitore']
+        end
+
+        unless settings.hash_fornitore_servizi['email_fornitore'].blank?
+          email_address_aggregatore = contact_person_technical.add_element "md:EmailAddress"
+          email_address_aggregatore.text = settings.hash_fornitore_servizi['email_fornitore']
+        end
+
+        unless settings.hash_fornitore_servizi['tel_fornitore'].blank?
+          telephone_number_aggregatore = contact_person_technical.add_element "md:TelephoneNumber"
+          telephone_number_aggregatore.text = settings.hash_fornitore_servizi['tel_fornitore']
+        end
+
 
         #meta_doc << REXML::XMLDecl.new(version='1.0', encoding='UTF-8')
         meta_doc << REXML::XMLDecl.new("1.0", "UTF-8")

@@ -151,7 +151,7 @@ module Cie
 
                 sp_sso.add_element "md:AssertionConsumerService", {
                   "Binding" => settings.assertion_consumer_service_binding,
-                  "Location" => (hash_service['external'] ? hash_service['url_consumer'] : settings.assertion_consumer_service_url ),
+                  "Location" => hash_service['url_consumer'],
                   "isDefault" => hash_service['default'],
                   "index" => index
                 }
